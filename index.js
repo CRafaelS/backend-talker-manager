@@ -27,15 +27,7 @@ app.get('/talker/:id', async (req, res) => {
   res.status(HTTP_OK_STATUS).json(talker);
 });
 
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-
-  if ([email, password].includes(undefined)) {
-    return res.status(401).json({ message: 'missing fields' });
-  }
-
-  return res.status(200).send({ token: generateToken() });
-});
+app.post('/login', (_req, res) => res.status(200).send({ token: generateToken() }));
 
 app.listen(PORT, () => {
   console.log('Online');
