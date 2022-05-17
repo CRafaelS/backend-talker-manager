@@ -1,5 +1,5 @@
 const express = require('express');
-const { getTalker } = require('./helper/helpers');
+const { getTalker, generateToken } = require('./helper/helpers');
 
 const app = express();
 app.use(express.json());
@@ -25,6 +25,16 @@ app.get('/talker/:id', async (req, res) => {
   if (!talker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 
   res.status(HTTP_OK_STATUS).json(talker);
+});
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if ([email, password].includes(undefined)) {
+    return res.status(401).json({ message: 'missing fields' });
+  }
+
+  return res.status(200).send({ token: generateToken() });
 });
 
 app.listen(PORT, () => {
