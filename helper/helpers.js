@@ -1,6 +1,6 @@
-const fs = require('fs');
+const fs = require('fs').promises;
 
-const getTalker = async () => JSON.parse(fs.readFileSync('./talker.json'));
+const getTalker = async () => JSON.parse(await fs.readFile('./talker.json'));
 
 module.exports = {
   getTalker,
