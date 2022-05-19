@@ -1,5 +1,4 @@
 const express = require('express');
-const { json } = require('express/lib/response');
 const { getTalker, generateToken, writeTalker } = require('./helper/helpers');
 const { 
   validateEmail,
@@ -73,10 +72,19 @@ app.put('/talker/:id',
     const talkerIndex = dataTalker.filter((data) => data.id !== +id);
     const changeTalker = { name, age, id: +id, talk };
     await writeTalker([...talkerIndex, changeTalker]);
-    console.log(talkerIndex);
-    console.log(changeTalker);
 
     return res.status(200).json(changeTalker);
+});
+
+app.delete('/talker/:id', 
+  validateToken,
+  async (req, res) => {
+    const { id } = req.params;
+    const dataTalker = await getTalker();
+    const talkerIndex = dataTalker.filter((data) => data.id !== +id);
+    await writeTalker(talkerIndex);
+
+    return res.status(204).json();
 });
 
 app.post('/login', validateEmail, validatePassword, 
