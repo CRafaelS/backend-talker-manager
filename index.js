@@ -1,6 +1,15 @@
 const express = require('express');
-const { getTalker, generateToken } = require('./helper/helpers');
-const { validateEmail, validatePassword } = require('./middleware/validateLogin'); 
+const { getTalker, generateToken, writeTalker } = require('./helper/helpers');
+const { 
+  validateEmail,
+  validatePassword,
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalkRate,
+  validateTalkWatched,
+  validateTalk,
+} = require('./middleware/index');
 
 const app = express();
 app.use(express.json());
@@ -26,6 +35,27 @@ app.get('/talker/:id', async (req, res) => {
   if (!talker) return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
 
   res.status(HTTP_OK_STATUS).json(talker);
+});
+
+app.post('/talker',
+  validateToken,
+  validateName,
+  validateAge,
+  validateTalk,
+  validateTalkRate,
+  validateTalkWatched,
+  async (req, res) => {
+    const { name, age, talk } = req.body;
+    const dataTalker = await getTalker();
+    console.log(name, age, talk);
+    const changeTalker = { 
+      name, 
+      age,
+      id: Math.max(...dataTalker.map((t) => t.id)) + 1,
+      talk,
+    };
+    await writeTalker([...dataTalker, changeTalker]);
+    return res.status(201).json(changeTalker);
 });
 
 app.post('/login', validateEmail, validatePassword, 
